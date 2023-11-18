@@ -6,6 +6,9 @@ from my_scraper.scrapy import WebSpider
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from apscheduler.schedulers.background import BackgroundScheduler
+from datetime import datetime, timedelta,timezone
+import pytz
 
 
 class Scraper(BaseModel):
@@ -50,6 +53,7 @@ class ScraperController:
         self.scraper = scraper
         self.webspider = webspider
         self.scraper_repository = scraper_repository
+        self.scheduler = BackgroundScheduler()
       
     def scrape(self):
           scraper_data = {
@@ -60,6 +64,25 @@ class ScraperController:
           }
           self.scraper_repository.add_scraper(scraper_data)
           result = self.webspider.start_request(self.scraper.get_url())
+          user_timezone = pytz.timezone('south_america/paramaribo')
+          scheduled_time = datetime.now(user_timezone).replace(hour=12, minute=0, second=0, microsecond=0)
+          if scheduled_time < datetime.now(user_timezone):
+              scheduled_time += timedelta(days=1)
+          self.scheduler.add_job(
+                self.webspider_results,
+                trigger="cron",
+                args=[self.scraper_repository],
+                year = scheduled_time.year,
+                month = scheduled_time.month,
+                day = scheduled_time.day,
+                hour = scheduled_time.hour,     
+                minute = scheduled_time.minute,
+                second = scheduled_time.second,
+                timezone = user_timezone,
+
+          )
+          self.scheduler.start()
+          
 
           if result == "scrapin_complete":
                  email_subject = "scrapin complete"
