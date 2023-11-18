@@ -10,11 +10,12 @@ class WebSpider(BaseModel):
     
     text : str
     def start_request(self,url:str):
-        
-        yield scrapy.Request(url=url, callback=self.response_parse)
-    def response_parse(self, response):
+        yield scrapy.Request(url=url, callback=self.response_parse, cb_kwargs={'web_name': self.web_name})
+    
+    def response_parse(self, response, web_name):
         for selector in response.html.xpath("//div[@class='a-section a-spacing-small a-spacing-top-small']"):
             yield {
+                'web_name': web_name,
                 'name': selector.xpath("//span[@class='a-size-base-plus a-color-base a-text-normal']/text()").get(),
                 'url': selector.xpath("//a[@class='a-link-normal s-underline-text s-underline-link-text s-link-style a-text-normal']/@href").get(),
                 'text': selector.xpath("//span[@class='a-size-base a-color-secondary']/text()").get(),
@@ -37,5 +38,4 @@ def web_spider_results(scraper_repository: ScraperRepository):
     crawler_process.join()
     return scraper_repository
 
-results = web_spider_results()
-print(results)
+

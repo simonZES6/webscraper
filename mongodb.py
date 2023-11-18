@@ -2,6 +2,7 @@ from pydantic import BaseModel
 from pymongo import MongoClient
 
 
+
 class Scraper(BaseModel):
     url: str
     xpath: str
@@ -38,7 +39,9 @@ if __name__ == '__main__':
     print(scraper.url, scraper.xpath, scraper.name, scraper.value)
 
     #Haal alle scrapers op uit de database
-   # db.get_collection("scraper").delete_one({"name": "google"})
+    db.get_collection("scraper").delete_one({"name": "google"})
 
     #Update de scraper met de naam google naar google2
-    db.get_collection("scraper").update_one({"name": "google"}, {"$set": {"name": "google2"}})
+    db.get_collection("scraper").update_one({"name": "google"}, {"$set": {"name": "google3"}})
+
+    

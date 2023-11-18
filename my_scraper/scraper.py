@@ -21,7 +21,7 @@ class Scraper(BaseModel):
             return self._name
     def get_email(self,email:_email):
             if not email:
-                raise ValueError("Invalid email address")
+                raise ValueError("Incomplete email address")
             email_regex = re.compile(r'([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+')
             if not re.fullmatch(email_regex, email):
                 raise ValueError("Invalid email address")
@@ -33,10 +33,9 @@ class Scraper(BaseModel):
            if not url:
                  raise ValueError("Incomplete url address")
            parsed_url = urlparse(url)
-           if parsed_url.scheme and parsed_url.netloc:
-                if not any(url.lower().endswith(i) for i in ['.docx', '.pdf', '.mp4', '.mp3']):
+           if not (parsed_url.scheme and parsed_url.netloc) or self._url.lower().endswith() (('.doc', '.docx', '.pdf', '.mp4', '.mp3')):
                  raise ValueError("Invalid url address")
-                return self._url
+           return self._url
     def set_name(self, name):
             self._name = name
     def set_email(self, email):
@@ -68,10 +67,11 @@ class ScraperController:
           scheduled_time = datetime.now(user_timezone).replace(hour=12, minute=0, second=0, microsecond=0)
           if scheduled_time < datetime.now(user_timezone):
               scheduled_time += timedelta(days=1)
+          
           self.scheduler.add_job(
-                self.webspider_results,
+                self.webspider.start_request,
                 trigger="cron",
-                args=[self.scraper_repository],
+                args=[self.scraper.get_url()],
                 year = scheduled_time.year,
                 month = scheduled_time.month,
                 day = scheduled_time.day,
@@ -106,6 +106,8 @@ class ScraperController:
         server.login(email_sender, email_password)
         server.sendmail(email_sender, email_receiver, text)
         server.quit()
+    
+ 
          
                  
-   
+  
