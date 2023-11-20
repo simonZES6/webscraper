@@ -106,8 +106,7 @@ class ScraperController:
         server.login(email_sender, email_password)
         server.sendmail(email_sender, email_receiver, text)
         server.quit()
-    
- 
+
          
                  
   

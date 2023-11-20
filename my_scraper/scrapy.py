@@ -15,6 +15,7 @@ class WebSpider(BaseModel):
     def response_parse(self, response, web_name):
         for selector in response.html.xpath("//div[@class='a-section a-spacing-small a-spacing-top-small']"):
             yield {
+                
                 'web_name': web_name,
                 'name': selector.xpath("//span[@class='a-size-base-plus a-color-base a-text-normal']/text()").get(),
                 'url': selector.xpath("//a[@class='a-link-normal s-underline-text s-underline-link-text s-link-style a-text-normal']/@href").get(),

@@ -12,7 +12,7 @@ class ScraperRepository:
         
     def add_scraper(self, scraper_data):
         scraper_data['deleted'] = False
-        scraper_data['deleted_at'] = None
+        scraper_data['deleted_at'] = None             
         self.db["scrapers"].insert_one(scraper_data)
         
     def get_scraper(self, name):
