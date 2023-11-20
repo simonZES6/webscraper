@@ -10,6 +10,8 @@ controller = ScraperController()
 def scrape(scraper: Scraper):
     return controller.scrape(scraper)
 
+
+
 scraper_controller = ScraperRepository()
 @app.delete("/database")
 def delete_scraper(name: str):
@@ -23,4 +25,5 @@ def get_scraper(name: str):
 
 @app.put("/database")
 def update(scraper: Scraper):
-        return scraper_controller.update_scraper(scraper)
+        return scraper_controller.update_scraper(scraper) 
+
