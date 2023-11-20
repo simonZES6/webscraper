@@ -19,7 +19,7 @@ class Scraper(BaseModel):
    
     def get_name(self):
             return self._name
-    def get_email(self,email:_email):
+    def get_email(self,email:str):
             if not email:
                 raise ValueError("Incomplete email address")
             email_regex = re.compile(r'([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+')
@@ -29,7 +29,7 @@ class Scraper(BaseModel):
            
     def get_password(self):
             return self._password
-    def get_url(self,url:_url):
+    def get_url(self,url:str):
            if not url:
                  raise ValueError("Incomplete url address")
            parsed_url = urlparse(url)
