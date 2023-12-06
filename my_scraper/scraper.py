@@ -12,42 +12,46 @@ import pytz
 
 
 class Scraper(BaseModel):
-    _name: str
-    _email: str
-    _password: str
-    _url: str
+    name: str = "default_name"   
+    email: str
+    password: str
+    url: str
    
     def get_name(self):
-            return self._name
-    def get_email(self,email:str):
-            if not email:
-                raise ValueError("Incomplete email address")
-            email_regex = re.compile(r'([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+')
-            if not re.fullmatch(email_regex, email):
-                raise ValueError("Invalid email address")
-            return self._email
+            return self.name
+    def get_email(self):
+            return self.email
+           
            
     def get_password(self):
-            return self._password
+            return self.password
     def get_url(self,url:str):
            if not url:
                  raise ValueError("Incomplete url address")
            parsed_url = urlparse(url)
-           if not (parsed_url.scheme and parsed_url.netloc) or self._url.lower().endswith() (('.doc', '.docx', '.pdf', '.mp4', '.mp3')):
+           if not (parsed_url.scheme and parsed_url.netloc) or self.url.lower().endswith() (('.doc', '.docx', '.pdf', '.mp4', '.mp3')):
                  raise ValueError("Invalid url address")
-           return self._url
+           return self.url
     def set_name(self, name):
-            self._name = name
+            self.name = name
     def set_email(self, email):
-            self._email = email
+            self.email = email
     def set_password(self, password):
-            self._password = password
+            self.password = password
     def set_url(self, url):
-            self._url = url
+            self.url = url
+    
+    def validate_url(self, url):
+        if not url:
+            raise ValueError("Incomplete url address")
+        parsed_url = urlparse(url)
+        if not (parsed_url.scheme and parsed_url.netloc) or self.url.lower().endswith(('.doc', '.docx', '.pdf', '.mp4', '.mp3')):
+            raise ValueError("Invalid url address")
 
 
 class ScraperController:
-    
+  
+
     def __init__(self, scraper: Scraper,scraper_repository: ScraperRepository,webspider: WebSpider):
         self.scraper = scraper
         self.webspider = webspider
@@ -56,22 +60,24 @@ class ScraperController:
       
     def scrape(self):
           scraper_data = {
-              "name": self.scraper.get_name(),
-              "email": self.scraper.get_email(),
-              "password": self.scraper.get_password(),
-              "url": self.scraper.get_url(),
+              "name": self.scraper.name,
+              "email": self.scraper.email,
+              "password": self.scraper.password,
+              "url": self.scraper.url,
           }
           self.scraper_repository.add_scraper(scraper_data)
-          result = self.webspider.start_request(self.scraper.get_url())
-          user_timezone = pytz.timezone('south_america/paramaribo')
-          scheduled_time = datetime.now(user_timezone).replace(hour=12, minute=0, second=0, microsecond=0)
-          if scheduled_time < datetime.now(user_timezone):
+          result = self.webspider.start_request(self.scraper.url)
+          
+          if not self.scheduler.running:
+            user_timezone = pytz.timezone('america/paramaribo')
+            scheduled_time = datetime.now(user_timezone).replace(hour=12, minute=0, second=0, microsecond=0)
+            if scheduled_time < datetime.now(user_timezone):
               scheduled_time += timedelta(days=1)
           
           self.scheduler.add_job(
                 self.webspider.start_request,
                 trigger="cron",
-                args=[self.scraper.get_url()],
+                args=[self.scraper.url],
                 year = scheduled_time.year,
                 month = scheduled_time.month,
                 day = scheduled_time.day,
@@ -88,6 +94,7 @@ class ScraperController:
                  email_subject = "scrapin complete"
                  email_body = "The scrapin process is complete"
                  self.send_email(self.scraper.get_email(),email_subject, email_body)
+              
 
     def send_email(self, email, email_subject, email_body):
         email_sender = self.scraper.get_email()

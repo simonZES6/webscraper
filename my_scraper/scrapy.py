@@ -6,9 +6,9 @@ from scrapy.signalmanager import dispatcher
 from my_scraper.database import ScraperRepository
 
 class WebSpider(BaseModel):
-    web_name : str
+   
     
-    text : str
+   
     def start_request(self,url:str):
         yield scrapy.Request(url=url, callback=self.response_parse, cb_kwargs={'web_name': self.web_name})
     
