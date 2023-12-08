@@ -9,9 +9,11 @@ scraper_controller = ScraperController(scraper_repository=get_db(),client=get_cl
 router = APIRouter(
     prefix="/scraper",
     tags=["Scraper"],
-    responses={404: {"description": "Not found"}},
+    responses={404: {"description": "Not found"}, 500: {"description": "Internal Server Error"}, 
+               400: {"description": "Bad Request"}, 401: {"description": "Unauthorized"}},
+
 )
 
 @router.post("/scrape")
-def scrape(user: User, db=Depends(get_db), client=Depends(get_client)):
-    return scraper_controller.scrape_website(user, db, client)
+def scrape(user: User):
+    return scraper_controller.scrape_website(user)

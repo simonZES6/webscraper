@@ -1,4 +1,4 @@
-# dependencies.py
+
 
 from fastapi import Depends
 from my_scraper.repositories.scraper_repositorie import ScraperRepository
