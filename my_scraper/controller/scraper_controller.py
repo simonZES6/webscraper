@@ -1,4 +1,5 @@
 import logging
+from fastapi import HTTPException
 from scraper_api import ScraperAPIClient
 from bs4 import BeautifulSoup
 from my_scraper.models.user import User
@@ -18,19 +19,19 @@ class ScraperController:
        
        
             result = self.client.get(url = user.url).text
+            
+            
+
 
         #  BeautifulSoup-object en geef de parser op
             soup = BeautifulSoup(result, 'html.parser')
 
         
         # Extract alle tekst
-            all_text = soup.get_text(separator='\n').strip()
-
-        
-
-        # Implementeer string formatting voor de gescrapte website
-            formatted_text = "Gescrapte inhoud van {url}:\n\n{content}".format(url=user.url, content=all_text)
-
+            all_text = soup.get_text(separator=' ').strip()
+            all_text = ' '.join(all_text.split())  # Verwijder overtollige spaties
+            
+            formatted_text = "Gescrapte inhoud van {url}:{content}".format(url=user.url, content=all_text)
 
         
         # sla gescrapte gegevens op in de database
@@ -40,5 +41,6 @@ class ScraperController:
        
        except Exception as se:
             # Afhandeling voor specifieke scraper uitzonderingen
-            logging.error(f"ScraperException: {se}, fout tijdens het scrapen: {user.url}")
+            logging.error(f"ScraperException: {se}")
+            raise HTTPException(status_code=500, detail=str(se))
           

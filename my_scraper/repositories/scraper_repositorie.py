@@ -1,3 +1,5 @@
+import logging
+from fastapi import HTTPException
 from pymongo import MongoClient
 
 
@@ -6,7 +8,8 @@ class ScraperRepository:
         try:
             self.db = MongoClient(db_url)[db_name]
         except Exception as e:
-            print("Error: db not found")
+            logging.error("Error: db not found")
+            raise HTTPException(status_code=500, detail="db not found")
       
         
 
@@ -16,6 +19,7 @@ class ScraperRepository:
         try:
             self.db["scrapers"].insert_one(scraper_data)
         except Exception as e:
-            print("Error: scraper not inserted")       
-        self.db["scrapers"].insert_one(scraper_data)
+            logging.error("Error: scraper not inserted")   
+            raise HTTPException(status_code=500, detail="Scraper not inserted")    
+       
         
