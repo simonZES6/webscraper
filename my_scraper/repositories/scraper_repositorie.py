@@ -16,10 +16,8 @@ class ScraperRepository:
         
 
     def add_scraper(self, scraper_data):
-        try:
-            self.db["scrapers"].insert_one(scraper_data)
-        except Exception as e:
-            logging.error("Error: scraper not inserted")   
-            raise HTTPException(status_code=500, detail="Scraper not inserted")    
+      
+        self.db["scrapers"].insert_one(scraper_data)
+           
        
         
