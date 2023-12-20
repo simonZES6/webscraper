@@ -1,0 +1,72 @@
+openapi: 3.0.0
+info:
+  title: Web Scraper API
+  version: 0.1.0
+  description: API for web scraper
+servers:
+  - url: http://localhost:8000
+    description: Development server
+  - url: https://docker-
+paths:
+  /scraper/scrape:
+    post:
+      summary: Scrape de inhoud van de website
+      description: Scrapen van een website
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/scrape_website'
+              
+      responses:
+        '200':
+          description: Succesvolle scraping
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  content:
+                    type: string
+        '400':
+          description: Ongeldige URL
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+        '500':
+          description: Interne serverfout
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+      components:
+        schemas:
+          ScrapeRequest:
+            type: object
+            properties:
+              url:
+                type: string                          
+
+scraper/add:
+  post:
+    summary: Voeg een nieuwe scraper toe
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              url:
+                type: string
+    responses:
+      '200':
+        description: Succesvolle toevoeging
