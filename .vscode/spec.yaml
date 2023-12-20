@@ -12,6 +12,9 @@ paths:
     post:
       summary: Scrape de inhoud van de website
       description: Scrapen van een website
+      parameters:
+        - name: url
+          in: query
       requestBody:
         required: true
         content:
@@ -70,3 +73,22 @@ scraper/add:
     responses:
       '200':
         description: Succesvolle toevoeging
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                detail:
+                  type: string
+      '500':
+        description: Db not found
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                detail:
+                  type: string
+        
+
+      
